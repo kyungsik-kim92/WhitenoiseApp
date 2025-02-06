@@ -33,6 +33,11 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true
+    }
 }
 
 dependencies {
@@ -45,4 +50,11 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // glide
+    implementation(libs.glide)
+    annotationProcessor(libs.glide.compiler)
+
+    // admob
+    implementation(libs.play.services.ads)
 }
