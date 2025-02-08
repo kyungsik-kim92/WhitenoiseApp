@@ -1,28 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/green_200"
     tools:context=".PlayFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_playList"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_time"
-        app:spanCount="3"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:overScrollMode="never"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/item_play" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_time"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
@@ -31,33 +17,47 @@
         android:elevation="4dp"
         android:orientation="horizontal"
         android:padding="12dp"
-        android:visibility="gone"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible">
 
         <TextView
             android:id="@+id/tv_scheduleTime"
-            app:layout_constraintEnd_toStartOf="@id/tv_realTime"
-            app:layout_constraintStart_toStartOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/tv_realTime"
+            app:layout_constraintStart_toStartOf="parent"
             tools:text="TIMER 0:00:35" />
 
         <TextView
             android:id="@+id/tv_realTime"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_scheduleTime"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_scheduleTime"
             tools:text="TIME 0:00:25" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_playList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:overScrollMode="never"
+        android:scrollbars="vertical"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_time"
+        app:spanCount="3"
+        tools:listitem="@layout/item_play" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

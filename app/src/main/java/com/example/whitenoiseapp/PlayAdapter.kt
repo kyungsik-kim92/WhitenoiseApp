@@ -1,5 +1,6 @@
 package com.example.whitenoiseapp
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -42,10 +43,10 @@ class PlayViewHolder(
     fun bind(item: PlayModel) {
         binding.playModel = item
         Glide.with(itemView).load(item.iconResId).into(binding.ivIcon)
-//        itemView.setOnClickListener {
-//            item.setIsSelected(!item.isSelected.value)
-//            onItemClick(layoutPosition, item.isSelected.value)
-//        }
-//        binding.executePendingBindings()
+        itemView.setOnClickListener {
+            item.setIsSelected(!item.isSelected.value)
+            onItemClick(layoutPosition, item.isSelected.value)
+            binding.invalidateAll()
+        }
     }
 }
