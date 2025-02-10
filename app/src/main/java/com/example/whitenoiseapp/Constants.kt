@@ -73,4 +73,49 @@ object Constants {
             ),
         )
     }
+
+    fun getTimerList(): List<TimerModel> {
+        return listOf(
+            TimerModel(
+                timerStr = "No time limit",
+                ms = 0
+            ),
+            TimerModel(
+                timerStr = "1 minute",
+                ms = 60000
+            ),
+            TimerModel(
+                timerStr = "5 minutes",
+                ms = 300000
+            ),
+            TimerModel(
+                timerStr = "10 minutes",
+                ms = 600000
+            ),
+            TimerModel(
+                timerStr = "15 minutes",
+                ms = 900000
+            ),
+            TimerModel(
+                timerStr = "20 minutes",
+                ms = 1200000
+            ),
+            TimerModel(
+                timerStr = "30 minutes",
+                ms = 1800000
+            ),
+            TimerModel(
+                timerStr = "1 hour",
+                ms = 3600000
+            ),
+            TimerModel(
+                timerStr = "2 hours",
+                ms = 7200000
+            ),
+            TimerModel(
+                timerStr = "3 hours",
+                ms = 10800000
+            ),
+        )
+    }
 }
