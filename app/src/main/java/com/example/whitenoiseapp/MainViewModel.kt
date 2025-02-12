@@ -9,7 +9,11 @@ class MainViewModel : ViewModel() {
     private val _playList = MutableStateFlow<List<PlayModel>>(emptyList())
     val playList = _playList.asStateFlow()
 
+    private val _timerList = MutableStateFlow<List<TimerModel>>(emptyList())
+    val timerList = _timerList.asStateFlow()
+
     init {
         _playList.value = Constants.getPlayList()
+        _timerList.value = Constants.getTimerList()
     }
 }
