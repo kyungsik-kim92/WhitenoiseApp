@@ -16,8 +16,8 @@ class TimerFragment : Fragment() {
     private var _binding: FragmentTimerBinding? = null
     private val binding get() = _binding!!
     private val mainViewModel: MainViewModel by activityViewModels()
-    private val timerAdapter = TimerAdapter { index, isSelected ->
-        onItemClick(index, isSelected)
+    private val timerAdapter = TimerAdapter { index ->
+        onItemClick(index)
     }
 
     override fun onCreateView(
@@ -40,7 +40,7 @@ class TimerFragment : Fragment() {
         _binding = null
     }
 
-    fun setupRecyclerView() {
+    private fun setupRecyclerView() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.timerList.collect { list ->
@@ -50,7 +50,7 @@ class TimerFragment : Fragment() {
         }
     }
 
-    private fun onItemClick(index: Int, isSelected: Boolean) {
+    private fun onItemClick(index: Int) {
 
     }
 }
