@@ -16,9 +16,7 @@ class TimerFragment : Fragment() {
     private var _binding: FragmentTimerBinding? = null
     private val binding get() = _binding!!
     private val mainViewModel: MainViewModel by activityViewModels()
-    private val timerAdapter = TimerAdapter { index ->
-        onItemClick(index)
-    }
+    private val timerAdapter = TimerAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,6 +30,9 @@ class TimerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvTimerList.adapter = timerAdapter
+        binding.rvTimerList.itemAnimator = null
+
+
         setupRecyclerView()
     }
 
@@ -50,7 +51,7 @@ class TimerFragment : Fragment() {
         }
     }
 
-    private fun onItemClick(index: Int) {
+    fun onItemClick(timerModel: TimerModel) {
 
     }
 }
