@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -15,8 +14,6 @@ import com.example.whitenoiseapp.service.WhiteNoiseService
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: MainViewModel by viewModels()
-
     lateinit var whiteNoiseService: WhiteNoiseService
 
     private val mConnection: ServiceConnection = object : ServiceConnection {
@@ -26,9 +23,7 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        override fun onServiceDisconnected(arg0: ComponentName) {
-
-        }
+        override fun onServiceDisconnected(arg0: ComponentName) {}
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +41,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        bindService(Intent(this, WhiteNoiseService::class.java), mConnection, Context.BIND_AUTO_CREATE)
+        bindService(
+            Intent(this, WhiteNoiseService::class.java),
+            mConnection,
+            Context.BIND_AUTO_CREATE
+        )
     }
 }

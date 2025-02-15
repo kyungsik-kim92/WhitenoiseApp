@@ -1,5 +1,6 @@
-package com.example.whitenoiseapp
+package com.example.whitenoiseapp.constants
 
+import com.example.whitenoiseapp.R
 import com.example.whitenoiseapp.model.PlayModel
 import com.example.whitenoiseapp.model.TimerModel
 

@@ -2,6 +2,7 @@ package com.example.whitenoiseapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,15 +14,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+
 class TimerAdapter(
+    private val isPlayingCheck: () -> Boolean
 ) : ListAdapter<TimerModel, TimerViewHolder>(diffUtil) {
     private var selectedPosition = RecyclerView.NO_POSITION
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerViewHolder {
         val binding =
             ItemTimerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return TimerViewHolder(binding) { position ->
-            handleSelection(position)
-        }
+        return TimerViewHolder(
+            binding,
+            onItemClick = { position ->
+                handleSelection(position)
+            },
+            isPlayingCheck = isPlayingCheck
+        )
     }
 
     override fun onBindViewHolder(holder: TimerViewHolder, position: Int) {
@@ -67,16 +75,22 @@ class TimerAdapter(
 
 class TimerViewHolder(
     private val binding: ItemTimerBinding,
-    private val onItemClick: (Int) -> Unit
+    private val onItemClick: (Int) -> Unit,
+    private val isPlayingCheck: () -> Boolean
 ) : RecyclerView.ViewHolder(binding.root) {
     private var job: Job? = null
 
     init {
         binding.root.setOnClickListener {
             val position = adapterPosition
+            if (!isPlayingCheck()) {
+                Toast.makeText(it.context, "음악을 선택해 주세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             if (position != RecyclerView.NO_POSITION) {
                 onItemClick(position)
             }
+
         }
     }
 

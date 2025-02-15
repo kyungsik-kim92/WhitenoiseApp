@@ -20,7 +20,6 @@
             android:id="@+id/btn_selector"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@{timerModel.isSelected ? @drawable/ic_clamp_selected : @drawable/ic_clamp_unselected}"
             tools:background="@drawable/ic_clamp_selected"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>

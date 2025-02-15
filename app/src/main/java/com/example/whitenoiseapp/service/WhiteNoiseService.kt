@@ -7,7 +7,7 @@ import android.os.Binder
 import android.os.CountDownTimer
 import android.os.IBinder
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.whitenoiseapp.Constants
+import com.example.whitenoiseapp.constants.Constants
 import com.example.whitenoiseapp.model.PlayModel
 
 class WhiteNoiseService : Service() {
@@ -18,9 +18,7 @@ class WhiteNoiseService : Service() {
 
 
     inner class WhiteNoiseBinder : Binder() {
-        fun getService(): WhiteNoiseService {
-            return this@WhiteNoiseService
-        }
+        fun getService()= this@WhiteNoiseService
     }
 
     override fun onBind(p0: Intent?): IBinder = WhiteNoiseBinder()
