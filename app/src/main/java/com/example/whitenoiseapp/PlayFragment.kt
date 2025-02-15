@@ -55,6 +55,10 @@ class PlayFragment : Fragment() {
     }
 
     private fun onItemClick(index: Int, isSelected: Boolean) {
-
+        if (isSelected) {
+            getMainActivity().whiteNoiseService.startMediaPlayer(index)
+        } else {
+            getMainActivity().whiteNoiseService.stopMediaPlayer(index)
+        }
     }
 }
