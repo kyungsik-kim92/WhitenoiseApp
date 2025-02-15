@@ -6,7 +6,7 @@
     <data>
         <variable
             name="playModel"
-            type="com.example.whitenoiseapp.PlayModel" />
+            type="com.example.whitenoiseapp.model.PlayModel" />
 
     </data>
 

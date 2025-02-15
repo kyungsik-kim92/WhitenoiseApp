@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/navigation_play"
-        android:name="com.example.whitenoiseapp.PlayFragment"
+        android:name="com.example.whitenoiseapp.ui.play.PlayFragment"
         android:label="fragment_play"
         tools:layout="@layout/fragment_play" />
     <fragment
         android:id="@+id/navigation_timer"
-        android:name="com.example.whitenoiseapp.TimerFragment"
+        android:name="com.example.whitenoiseapp.ui.timer.TimerFragment"
         android:label="TimerFragment"
         tools:layout="@layout/fragment_timer" />
 

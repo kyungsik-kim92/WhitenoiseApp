@@ -1,4 +1,4 @@
-package com.example.whitenoiseapp
+package com.example.whitenoiseapp.model
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,4 +1,4 @@
-package com.example.whitenoiseapp
+package com.example.whitenoiseapp.ui.play
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,31 +9,37 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.whitenoiseapp.databinding.FragmentTimerBinding
+import com.example.whitenoiseapp.MainViewModel
+import com.example.whitenoiseapp.adapter.PlayAdapter
+import com.example.whitenoiseapp.databinding.FragmentPlayBinding
+import com.example.whitenoiseapp.util.getMainActivity
 import kotlinx.coroutines.launch
 
-class TimerFragment : Fragment() {
-    private var _binding: FragmentTimerBinding? = null
+class PlayFragment : Fragment() {
+    private var _binding: FragmentPlayBinding? = null
     private val binding get() = _binding!!
-    private val mainViewModel: MainViewModel by activityViewModels()
-    private val timerAdapter = TimerAdapter()
+    private val mainViewModel by activityViewModels<MainViewModel>()
+    private val playAdapter = PlayAdapter { index, isSelected ->
+        onItemClick(index, isSelected)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentTimerBinding.inflate(inflater, container, false)
+        _binding = FragmentPlayBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.rvTimerList.adapter = timerAdapter
-        binding.rvTimerList.itemAnimator = null
 
-
+        binding.rvPlayList.adapter = playAdapter
         setupRecyclerView()
+
+
     }
 
     override fun onDestroyView() {
@@ -44,14 +50,18 @@ class TimerFragment : Fragment() {
     private fun setupRecyclerView() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                mainViewModel.timerList.collect { list ->
-                    timerAdapter.submitList(list)
+                mainViewModel.playList.collect { list ->
+                    playAdapter.submitList(list)
                 }
             }
         }
     }
 
-    fun onItemClick(timerModel: TimerModel) {
-
+    private fun onItemClick(index: Int, isSelected: Boolean) {
+        if (isSelected) {
+            getMainActivity().whiteNoiseService.startMediaPlayer(index)
+        } else {
+            getMainActivity().whiteNoiseService.stopMediaPlayer(index)
+        }
     }
 }

@@ -1,11 +1,13 @@
-package com.example.whitenoiseapp
+package com.example.whitenoiseapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.whitenoiseapp.R
 import com.example.whitenoiseapp.databinding.ItemTimerBinding
+import com.example.whitenoiseapp.model.TimerModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

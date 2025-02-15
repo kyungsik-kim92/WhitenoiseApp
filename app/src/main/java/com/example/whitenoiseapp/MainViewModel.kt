@@ -1,6 +1,8 @@
 package com.example.whitenoiseapp
 
 import androidx.lifecycle.ViewModel
+import com.example.whitenoiseapp.model.PlayModel
+import com.example.whitenoiseapp.model.TimerModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 

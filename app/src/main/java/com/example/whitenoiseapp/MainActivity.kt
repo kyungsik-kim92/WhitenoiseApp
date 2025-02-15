@@ -3,16 +3,15 @@ package com.example.whitenoiseapp
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.whitenoiseapp.databinding.ActivityMainBinding
+import com.example.whitenoiseapp.service.WhiteNoiseService
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

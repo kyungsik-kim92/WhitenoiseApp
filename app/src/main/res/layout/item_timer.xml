@@ -7,7 +7,7 @@
 
         <variable
             name="timerModel"
-            type="com.example.whitenoiseapp.TimerModel" />
+            type="com.example.whitenoiseapp.model.TimerModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

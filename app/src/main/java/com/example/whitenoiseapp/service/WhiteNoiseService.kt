@@ -1,4 +1,4 @@
-package com.example.whitenoiseapp
+package com.example.whitenoiseapp.service
 
 import android.app.Service
 import android.content.Intent
@@ -7,6 +7,8 @@ import android.os.Binder
 import android.os.CountDownTimer
 import android.os.IBinder
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.whitenoiseapp.Constants
+import com.example.whitenoiseapp.model.PlayModel
 
 class WhiteNoiseService : Service() {
 

@@ -1,5 +1,8 @@
 package com.example.whitenoiseapp
 
+import com.example.whitenoiseapp.model.PlayModel
+import com.example.whitenoiseapp.model.TimerModel
+
 object Constants {
     fun getPlayList(): List<PlayModel> {
         return listOf(

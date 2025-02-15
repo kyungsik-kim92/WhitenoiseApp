@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/green_200"
-    tools:context=".PlayFragment">
+    tools:context=".ui.play.PlayFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_time"

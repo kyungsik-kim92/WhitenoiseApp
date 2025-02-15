@@ -1,4 +1,4 @@
-package com.example.whitenoiseapp
+package com.example.whitenoiseapp.ui.timer
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,34 +9,34 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.whitenoiseapp.databinding.FragmentPlayBinding
+import com.example.whitenoiseapp.MainViewModel
+import com.example.whitenoiseapp.adapter.TimerAdapter
+import com.example.whitenoiseapp.databinding.FragmentTimerBinding
+import com.example.whitenoiseapp.model.TimerModel
 import kotlinx.coroutines.launch
 
-class PlayFragment : Fragment() {
-    private var _binding: FragmentPlayBinding? = null
+class TimerFragment : Fragment() {
+    private var _binding: FragmentTimerBinding? = null
     private val binding get() = _binding!!
-    private val mainViewModel by activityViewModels<MainViewModel>()
-    private val playAdapter = PlayAdapter { index, isSelected ->
-        onItemClick(index, isSelected)
-    }
-
+    private val mainViewModel: MainViewModel by activityViewModels()
+    private val timerAdapter = TimerAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPlayBinding.inflate(inflater, container, false)
+        _binding = FragmentTimerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.rvTimerList.adapter = timerAdapter
+        binding.rvTimerList.itemAnimator = null
 
-        binding.rvPlayList.adapter = playAdapter
+
         setupRecyclerView()
-
-
     }
 
     override fun onDestroyView() {
@@ -47,18 +47,14 @@ class PlayFragment : Fragment() {
     private fun setupRecyclerView() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                mainViewModel.playList.collect { list ->
-                    playAdapter.submitList(list)
+                mainViewModel.timerList.collect { list ->
+                    timerAdapter.submitList(list)
                 }
             }
         }
     }
 
-    private fun onItemClick(index: Int, isSelected: Boolean) {
-        if (isSelected) {
-            getMainActivity().whiteNoiseService.startMediaPlayer(index)
-        } else {
-            getMainActivity().whiteNoiseService.stopMediaPlayer(index)
-        }
+    fun onItemClick(timerModel: TimerModel) {
+
     }
 }
