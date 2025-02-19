@@ -16,7 +16,8 @@ import kotlinx.coroutines.launch
 
 
 class TimerAdapter(
-    private val isPlayingCheck: () -> Boolean
+    private val isPlayingCheck: () -> Boolean,
+    val selectUnit: (timerModel: TimerModel) -> Unit
 ) : ListAdapter<TimerModel, TimerViewHolder>(diffUtil) {
     private var selectedPosition = RecyclerView.NO_POSITION
 
