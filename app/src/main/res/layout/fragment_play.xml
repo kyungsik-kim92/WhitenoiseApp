@@ -31,7 +31,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/tv_realTime"
             app:layout_constraintStart_toStartOf="parent"
-            tools:text="TIMER 0:00:35" />
+            tools:text="SET 0:00:35" />
 
         <TextView
             android:id="@+id/tv_realTime"

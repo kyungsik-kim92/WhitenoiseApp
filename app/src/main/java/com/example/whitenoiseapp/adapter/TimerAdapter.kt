@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class TimerAdapter(
     private val isPlayingCheck: () -> Boolean,
-    val selectUnit: (timerModel: TimerModel) -> Unit
+    private val selectUnit: (TimerModel) -> Unit
 ) : ListAdapter<TimerModel, TimerViewHolder>(diffUtil) {
     private var selectedPosition = RecyclerView.NO_POSITION
 
@@ -59,6 +59,7 @@ class TimerAdapter(
 
         getItem(newPosition).setIsSelected(true)
         selectedPosition = newPosition
+        selectUnit(getItem(newPosition))
     }
 
 

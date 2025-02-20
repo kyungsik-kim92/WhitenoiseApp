@@ -10,14 +10,7 @@ class PlayViewModel : ViewModel() {
     private val _playList = MutableStateFlow<List<PlayModel>>(emptyList())
     val playList = _playList.asStateFlow()
 
-    private var _isPlaying = MutableStateFlow(false)
-    val isPlaying = _isPlaying.asStateFlow()
-
     init {
         _playList.value = Constants.getPlayList()
-    }
-
-    fun setIsPlaying(isPlaying: Boolean) {
-        _isPlaying.value = isPlaying
     }
 }

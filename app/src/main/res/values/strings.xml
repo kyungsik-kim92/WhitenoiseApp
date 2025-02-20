@@ -3,4 +3,7 @@
 
     <string name="title_play">Play</string>
     <string name="title_timer">Timer</string>
+
+    <string name="schedule_time_format" formatted="false">SET %d:%02d:%02d</string>
+    <string name="real_time_format" formatted="false">TIME %d:%02d:%02d</string>
 </resources>
