@@ -17,9 +17,17 @@
         android:elevation="4dp"
         android:orientation="horizontal"
         android:padding="12dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible">
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/timerGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="tv_scheduleTime,tv_realTime"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/tv_scheduleTime"
@@ -43,7 +51,8 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/tv_scheduleTime"
-            tools:text="TIME 0:00:25" />
+            tools:text="TIME 0:00:25"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -70,8 +70,11 @@ class PlayFragment : Fragment() {
                                 val second = timerModel.ms % 3600000 % 60000 / 1000
                                 text =
                                     getString(R.string.schedule_time_format, hour, minute, second)
-                                View.VISIBLE
+
+
                             }
+                            binding.layoutTime.visibility = View.VISIBLE
+                            binding.timerGroup.visibility = View.VISIBLE
                         }
                 }
             }
@@ -85,7 +88,6 @@ class PlayFragment : Fragment() {
                         val minute = ms % 3600000 / 60000
                         val second = ms % 3600000 % 60000 / 1000
                         text = getString(R.string.real_time_format, hour, minute, second)
-                        visibility = View.VISIBLE
                     }
                 }
             }
