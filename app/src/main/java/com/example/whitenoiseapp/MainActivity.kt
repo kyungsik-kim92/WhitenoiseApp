@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as WhiteNoiseService.WhiteNoiseBinder
             whiteNoiseService = binder.getService()
-
+            viewModel.setServiceReady(true)
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {}

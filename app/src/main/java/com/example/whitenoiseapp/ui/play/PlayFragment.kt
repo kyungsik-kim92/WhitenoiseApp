@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -14,17 +13,20 @@ import com.example.whitenoiseapp.MainViewModel
 import com.example.whitenoiseapp.R
 import com.example.whitenoiseapp.adapter.PlayAdapter
 import com.example.whitenoiseapp.databinding.FragmentPlayBinding
+import com.example.whitenoiseapp.service.WhiteNoiseService
 import com.example.whitenoiseapp.util.getMainActivity
 import kotlinx.coroutines.launch
 
 class PlayFragment : Fragment() {
     private var _binding: FragmentPlayBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<PlayViewModel>()
     private val mainViewModel by activityViewModels<MainViewModel>()
-    private val playAdapter = PlayAdapter { index, isSelected ->
-        onItemClick(index, isSelected)
-    }
+    private lateinit var whiteNoiseService: WhiteNoiseService
+    private val playAdapter = PlayAdapter(
+        onItemClick = { index, isSelected ->
+            onItemClick(index, isSelected)
+        }
+    )
 
 
     override fun onCreateView(
@@ -38,6 +40,7 @@ class PlayFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        observeService()
         binding.rvPlayList.adapter = playAdapter
         setupRecyclerView()
         observeTimerState()
@@ -51,8 +54,19 @@ class PlayFragment : Fragment() {
     private fun setupRecyclerView() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.playList.collect { list ->
+                mainViewModel.playList.collect { list ->
                     playAdapter.submitList(list)
+                }
+            }
+        }
+    }
+
+    private fun observeService() {
+        lifecycleScope.launch {
+            mainViewModel.isServiceReady.collect { isReady ->
+                if (isReady) {
+                    whiteNoiseService = getMainActivity().whiteNoiseService
+                    mainViewModel.observeTimerState(whiteNoiseService.timerState)
                 }
             }
         }

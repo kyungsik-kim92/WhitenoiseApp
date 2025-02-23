@@ -8,6 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.whitenoiseapp.databinding.ItemPlayBinding
 import com.example.whitenoiseapp.model.PlayModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class PlayAdapter(
     private val onItemClick: (index: Int, isSelected: Boolean) -> Unit
@@ -38,15 +42,22 @@ class PlayAdapter(
 
 class PlayViewHolder(
     private val binding: ItemPlayBinding,
-    private val onItemClick: (index: Int, isSelected: Boolean) -> Unit
+    private val onItemClick: (index: Int, isSelected: Boolean) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
+    private var job: Job? = null
     fun bind(item: PlayModel) {
+        job?.cancel()
+        job = CoroutineScope(Dispatchers.Main).launch {
+            item.isSelected.collect { isSelected ->
+                binding.playModel = item
+                binding.invalidateAll()
+            }
+        }
         binding.playModel = item
         Glide.with(itemView).load(item.iconResId).into(binding.ivIcon)
         itemView.setOnClickListener {
             item.setIsSelected(!item.isSelected.value)
             onItemClick(layoutPosition, item.isSelected.value)
-            binding.invalidateAll()
         }
     }
 }
