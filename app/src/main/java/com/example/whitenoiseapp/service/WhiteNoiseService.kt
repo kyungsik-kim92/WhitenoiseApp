@@ -69,7 +69,7 @@ class WhiteNoiseService : Service() {
 
             override fun onFinish() {
                 serviceScope.launch {
-                    _timerState.emit(TimerState.Finish)
+                    mediaPlayerList.forEachIndexed { index, _ -> stopMediaPlayer(index) }
                 }
             }
         }.start()
