@@ -8,6 +8,7 @@ import com.example.whitenoiseapp.service.WhiteNoiseService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
@@ -36,6 +37,13 @@ class MainViewModel : ViewModel() {
 
                     is WhiteNoiseService.TimerState.Finish -> {
                         _isPlaying.value = false
+                        _scheduledTime.update { currentList ->
+                            currentList.map { timer ->
+                                timer.apply {
+                                    setIsSelected(false)
+                                }
+                            }
+                        }
                     }
                 }
             }
