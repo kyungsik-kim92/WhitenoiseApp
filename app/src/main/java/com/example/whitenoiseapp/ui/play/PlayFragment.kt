@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -21,6 +22,7 @@ class PlayFragment : Fragment() {
     private var _binding: FragmentPlayBinding? = null
     private val binding get() = _binding!!
     private val mainViewModel by activityViewModels<MainViewModel>()
+    private val viewModel by viewModels<PlayViewModel>()
     private lateinit var whiteNoiseService: WhiteNoiseService
     private val playAdapter = PlayAdapter(
         onItemClick = { index, isSelected ->
@@ -54,7 +56,7 @@ class PlayFragment : Fragment() {
     private fun setupRecyclerView() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                mainViewModel.playList.collect { list ->
+                viewModel.playList.collect { list ->
                     playAdapter.submitList(list)
                 }
             }
@@ -66,7 +68,7 @@ class PlayFragment : Fragment() {
             mainViewModel.isServiceReady.collect { isReady ->
                 if (isReady) {
                     whiteNoiseService = getMainActivity().whiteNoiseService
-                    mainViewModel.observeTimerState(whiteNoiseService.timerState)
+                    viewModel.clearSelection(whiteNoiseService.timerState)
                 }
             }
         }

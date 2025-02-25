@@ -27,12 +27,12 @@ class MainViewModel : ViewModel() {
     private val _realTime = MutableStateFlow(0L)
     val realTime = _realTime.asStateFlow()
 
-    private val _playList = MutableStateFlow<List<PlayModel>>(emptyList())
-    val playList = _playList.asStateFlow()
+//    private val _playList = MutableStateFlow<List<PlayModel>>(emptyList())
+//    val playList = _playList.asStateFlow()
 
     init {
         _scheduledTime.value = Constants.getTimerList()
-        _playList.value = Constants.getPlayList()
+//        _playList.value = Constants.getPlayList()
     }
 
     fun observeTimerState(timerState: Flow<WhiteNoiseService.TimerState>) {
@@ -51,13 +51,13 @@ class MainViewModel : ViewModel() {
                                 }
                             }
                         }
-                        _playList.update { currentList ->
-                            currentList.map { playList ->
-                                playList.apply {
-                                    setIsSelected(false)
-                                }
-                            }
-                        }
+//                        _playList.update { currentList ->
+//                            currentList.map { playList ->
+//                                playList.apply {
+//                                    setIsSelected(false)
+//                                }
+//                            }
+//                        }
                     }
                 }
             }
