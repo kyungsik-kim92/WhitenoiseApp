@@ -42,6 +42,7 @@ class PlayFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.observeSharedEvents(mainViewModel)
         observeService()
         binding.rvPlayList.adapter = playAdapter
         setupRecyclerView()
@@ -68,7 +69,7 @@ class PlayFragment : Fragment() {
             mainViewModel.isServiceReady.collect { isReady ->
                 if (isReady) {
                     whiteNoiseService = getMainActivity().whiteNoiseService
-                    viewModel.clearSelection(whiteNoiseService.timerState)
+                    mainViewModel.observeTimerState(whiteNoiseService.timerState)
                 }
             }
         }
