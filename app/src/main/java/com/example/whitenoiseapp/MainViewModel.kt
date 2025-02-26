@@ -57,4 +57,11 @@ class MainViewModel : ViewModel() {
             }
         }
     }
+
+    fun formatTime(ms: Long, set: String): String {
+        val hours = ms / 3600000
+        val minutes = ms % 3600000 / 60000
+        val seconds = ms % 3600000 % 60000 / 1000
+        return String.format("$set %02d:%02d:%02d", hours, minutes, seconds)
+    }
 }

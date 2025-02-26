@@ -86,7 +86,7 @@ object Constants {
             ),
             TimerModel(
                 timerStr = "1 minute",
-                ms = 2000
+                ms = 60000
             ),
             TimerModel(
                 timerStr = "5 minutes",
