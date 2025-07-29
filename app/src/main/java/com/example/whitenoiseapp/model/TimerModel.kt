@@ -1,17 +1,7 @@
 package com.example.whitenoiseapp.model
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-
-class TimerModel(
-    var timerStr: String,
-    var ms: Long = 0,
-    private val _isSelected: MutableStateFlow<Boolean> = MutableStateFlow(false)
-) {
-    val isSelected: StateFlow<Boolean> = _isSelected.asStateFlow()
-
-    fun setIsSelected(selected: Boolean) {
-        _isSelected.value = selected
-    }
-}
+data class TimerModel(
+    val timerStr: String,
+    val ms: Long = 0,
+    var isSelected: Boolean = false
+)
