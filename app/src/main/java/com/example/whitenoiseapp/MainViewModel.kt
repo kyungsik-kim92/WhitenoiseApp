@@ -10,29 +10,38 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private val _isServiceReady = MutableStateFlow(false)
-    val isServiceReady = _isServiceReady.asStateFlow()
+    private val _uiState = MutableStateFlow<MainUiState>(MainUiState.Loading)
+    val uiState = _uiState.asStateFlow()
 
-    fun setServiceReady(ready: Boolean) {
-        _isServiceReady.value = ready
-    }
+    private val _events = MutableSharedFlow<MainUiEvent>()
+    val events = _events.asSharedFlow()
 
-    private val _timerFinishedEvent = MutableSharedFlow<Unit>(replay = 0)
-    val timerFinishedEvent = _timerFinishedEvent.asSharedFlow()
-
-    private val _scheduledTime = MutableStateFlow<List<TimerModel>>(emptyList())
-    val scheduledTime = _scheduledTime.asStateFlow()
+    private val _timerList = MutableStateFlow<List<TimerModel>>(emptyList())
+    val timerList = _timerList.asStateFlow()
 
     private val _realTime = MutableStateFlow(0L)
     val realTime = _realTime.asStateFlow()
 
     init {
-        _scheduledTime.value = Constants.getTimerList()
+        _timerList.value = Constants.getTimerList()
+        _uiState.value = MainUiState.Success()
+    }
+
+    fun setServiceReady(ready: Boolean) {
+        val currentState = _uiState.value
+        if (currentState is MainUiState.Success) {
+            _uiState.value = currentState.copy(isServiceReady = ready)
+        }
+
+        if (ready) {
+            viewModelScope.launch {
+                _events.emit(MainUiEvent.ServiceReady)
+            }
+        }
     }
 
     fun observeTimerState(timerState: Flow<WhiteNoiseService.TimerState>) {
@@ -41,21 +50,35 @@ class MainViewModel : ViewModel() {
                 when (state) {
                     is WhiteNoiseService.TimerState.Update -> {
                         _realTime.value = state.ms
+                        val currentState = _uiState.value
+                        if (currentState is MainUiState.Success) {
+                            _uiState.value = currentState.copy(currentRealTime = state.ms)
+                        }
                     }
 
                     is WhiteNoiseService.TimerState.Finish -> {
-                        _scheduledTime.update { currentList ->
-                            currentList.map { timer ->
-                                timer.apply {
-                                    setIsSelected(false)
-                                }
-                            }
+                        val updatedList = _timerList.value.map { timer ->
+                            timer.copy(isSelected = false)
                         }
-                        _timerFinishedEvent.emit(Unit)
+                        _timerList.value = updatedList
+
+                        viewModelScope.launch {
+                            _events.emit(MainUiEvent.TimerFinished)
+                        }
                     }
                 }
             }
         }
+    }
+    fun selectTimer(selectedIndex: Int) {
+        val updatedList = _timerList.value.mapIndexed { index, timer ->
+            timer.copy(isSelected = index == selectedIndex)
+        }
+        _timerList.value = updatedList
+    }
+
+    fun getSelectedTimer(): TimerModel? {
+        return _timerList.value.find { it.isSelected }
     }
 
     fun formatTime(ms: Long, set: String): String {
