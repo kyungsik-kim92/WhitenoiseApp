@@ -46,12 +46,9 @@ class PlayFragment : Fragment() {
         setupRecyclerView()
         observeUiState()
         observeEvents()
+        viewModel.observeTimerFinished(mainViewModel)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 
     private fun setupRecyclerView() {
         binding.rvPlayList.adapter = playAdapter
@@ -168,5 +165,10 @@ class PlayFragment : Fragment() {
             whiteNoiseService = getMainActivity().whiteNoiseService
             mainViewModel.observeTimerState(whiteNoiseService.timerState)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
