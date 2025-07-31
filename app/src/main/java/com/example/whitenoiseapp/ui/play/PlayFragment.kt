@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.whitenoiseapp.MainUiState
 import com.example.whitenoiseapp.MainViewModel
 import com.example.whitenoiseapp.adapter.PlayAdapter
 import com.example.whitenoiseapp.databinding.FragmentPlayBinding
@@ -24,8 +26,8 @@ class PlayFragment : Fragment() {
     private val viewModel by viewModels<PlayViewModel>()
     private lateinit var whiteNoiseService: WhiteNoiseService
     private val playAdapter = PlayAdapter(
-        onItemClick = { index, isSelected ->
-            onItemClick(index, isSelected)
+        onItemClick = { index ->
+            viewModel.togglePlaySelection(index)
         }
     )
 
@@ -41,11 +43,9 @@ class PlayFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.observeSharedEvents(mainViewModel)
-        observeService()
-        binding.rvPlayList.adapter = playAdapter
         setupRecyclerView()
-        observeTimerState()
+        observeUiState()
+        observeEvents()
     }
 
     override fun onDestroyView() {
@@ -54,57 +54,119 @@ class PlayFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        binding.rvPlayList.adapter = playAdapter
+    }
+
+    private fun observeUiState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.playList.collect { list ->
-                    playAdapter.submitList(list)
+                viewModel.playList.collect { playList ->
+                    playAdapter.submitList(playList)
                 }
             }
         }
-    }
-
-    private fun observeService() {
-        lifecycleScope.launch {
-            mainViewModel.isServiceReady.collect { isReady ->
-                if (isReady) {
-                    whiteNoiseService = getMainActivity().whiteNoiseService
-                    mainViewModel.observeTimerState(whiteNoiseService.timerState)
-                }
-            }
-        }
-    }
-
-    private fun observeTimerState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                mainViewModel.scheduledTime.collect { scheduledTime ->
-                    scheduledTime.filter { timerModel -> timerModel.isSelected.value }
-                        .forEach { timerModel ->
-                            binding.tvScheduleTime.text =
-                                mainViewModel.formatTime(timerModel.ms,"SET")
-
-                            binding.layoutTime.visibility = View.VISIBLE
-                            binding.timerGroup.visibility = View.VISIBLE
+                viewModel.uiState.collect { uiState ->
+                    when (uiState) {
+                        is PlayUiState.Loading -> {}
+                        is PlayUiState.Success -> {
+                            updateTimerUI(uiState)
+                            if (uiState.isServiceReady) {
+                                initializeService()
+                            }
                         }
+
+                        is PlayUiState.Error -> {}
+                    }
+                }
+            }
+        }
+
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.uiState.collect { mainState ->
+                    when (mainState) {
+                        is MainUiState.Success -> {
+                            viewModel.updateServiceReady(mainState.isServiceReady)
+                        }
+
+                        is MainUiState.Error -> {}
+                        else -> {}
+                    }
+                }
+            }
+        }
+
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.timerList.collect { timerList ->
+                    val selectedTimer = timerList.find { it.isSelected }
+                    viewModel.updateTimerInfo(selectedTimer, mainViewModel.realTime.value)
                 }
             }
         }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                mainViewModel.realTime.collect { ms ->
-                    binding.tvRealTime.text = mainViewModel.formatTime(ms,"TIMER")
+                mainViewModel.realTime.collect { realTime ->
+                    val selectedTimer = mainViewModel.getSelectedTimer()
+                    viewModel.updateTimerInfo(selectedTimer, realTime)
                 }
             }
         }
     }
 
 
-    private fun onItemClick(index: Int, isSelected: Boolean) {
-        if (isSelected) {
-            getMainActivity().whiteNoiseService.startMediaPlayer(index)
+    private fun observeEvents() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.events.collect { event ->
+                    when (event) {
+                        is PlayUiEvent.PlaySelected -> {
+                            setPlaySelection(event.index, event.isSelected)
+                        }
+
+                        is PlayUiEvent.ShowToast -> {
+                            Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                        }
+
+                        else -> {}
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateTimerUI(uiState: PlayUiState.Success) {
+        if (uiState.isTimerVisible && uiState.currentTimer != null) {
+            binding.tvScheduleTime.text = mainViewModel.formatTime(uiState.scheduledTime, "SET")
+            binding.tvRealTime.text = mainViewModel.formatTime(uiState.realTime, "TIMER")
+            binding.layoutTime.visibility = View.VISIBLE
+            binding.timerGroup.visibility = View.VISIBLE
         } else {
-            getMainActivity().whiteNoiseService.stopMediaPlayer(index)
+            binding.layoutTime.visibility = View.GONE
+            binding.timerGroup.visibility = View.GONE
+        }
+    }
+
+
+    private fun setPlaySelection(index: Int, isSelected: Boolean) {
+        if (::whiteNoiseService.isInitialized) {
+            if (isSelected) {
+                whiteNoiseService.startMediaPlayer(index)
+            } else {
+                whiteNoiseService.stopMediaPlayer(index)
+            }
+        }
+    }
+
+    private fun initializeService() {
+        if (::whiteNoiseService.isInitialized.not()) {
+            whiteNoiseService = getMainActivity().whiteNoiseService
+            mainViewModel.observeTimerState(whiteNoiseService.timerState)
         }
     }
 }
