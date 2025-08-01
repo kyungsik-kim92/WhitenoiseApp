@@ -56,6 +56,28 @@ class MainViewModel : ViewModel() {
                         }
                     }
 
+                    is WhiteNoiseService.TimerState.Paused -> {
+                        _realTime.value = state.ms
+                        val currentState = _uiState.value
+                        if (currentState is MainUiState.Success) {
+                            _uiState.value = currentState.copy(currentRealTime = state.ms)
+                        }
+                        viewModelScope.launch {
+                            _events.emit(MainUiEvent.TimerPaused)
+                        }
+                    }
+
+                    is WhiteNoiseService.TimerState.Resumed -> {
+                        _realTime.value = state.ms
+                        val currentState = _uiState.value
+                        if (currentState is MainUiState.Success) {
+                            _uiState.value = currentState.copy(currentRealTime = state.ms)
+                        }
+                        viewModelScope.launch {
+                            _events.emit(MainUiEvent.TimerResumed)
+                        }
+                    }
+
                     is WhiteNoiseService.TimerState.Finish -> {
                         val updatedList = _timerList.value.map { timer ->
                             timer.copy(isSelected = false)
@@ -66,10 +88,12 @@ class MainViewModel : ViewModel() {
                             _events.emit(MainUiEvent.TimerFinished)
                         }
                     }
+
                 }
             }
         }
     }
+
     fun selectTimer(selectedIndex: Int) {
         val updatedList = _timerList.value.mapIndexed { index, timer ->
             timer.copy(isSelected = index == selectedIndex)
@@ -87,4 +111,5 @@ class MainViewModel : ViewModel() {
         val seconds = ms % 3600000 % 60000 / 1000
         return String.format("$set %02d:%02d:%02d", hours, minutes, seconds)
     }
+
 }

@@ -6,11 +6,14 @@ sealed class MainUiState {
         val isServiceReady: Boolean = false,
         val currentRealTime: Long = 0L
     ) : MainUiState()
+
     data class Error(val message: String) : MainUiState()
 }
 
 sealed class MainUiEvent {
     data object ServiceReady : MainUiEvent()
     data object TimerFinished : MainUiEvent()
+    data object TimerPaused : MainUiEvent()
+    data object TimerResumed : MainUiEvent()
     data class ShowError(val message: String) : MainUiEvent()
 }
