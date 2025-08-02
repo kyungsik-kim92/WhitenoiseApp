@@ -27,7 +27,7 @@ class PlayAdapter(
     companion object {
         private val diffUtil = object : DiffUtil.ItemCallback<PlayModel>() {
             override fun areItemsTheSame(oldItem: PlayModel, newItem: PlayModel) =
-                oldItem == newItem
+                oldItem.musicResId == newItem.musicResId
 
             override fun areContentsTheSame(oldItem: PlayModel, newItem: PlayModel) =
                 oldItem == newItem
