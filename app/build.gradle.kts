@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -78,5 +79,10 @@ dependencies {
     // glide
     implementation(libs.glide)
     annotationProcessor(libs.glide.compiler)
+
+    implementation("com.google.dagger:hilt-android:2.48.1")
+    kapt("com.google.dagger:hilt-compiler:2.48.1")
+
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
 }

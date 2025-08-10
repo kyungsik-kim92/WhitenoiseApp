@@ -1,18 +1,21 @@
-package com.example.whitenoiseapp
+package com.example.whitenoiseapp.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.whitenoiseapp.constants.Constants
 import com.example.whitenoiseapp.model.TimerModel
 import com.example.whitenoiseapp.service.WhiteNoiseService
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow<MainUiState>(MainUiState.Loading)
     val uiState = _uiState.asStateFlow()
@@ -95,10 +98,12 @@ class MainViewModel : ViewModel() {
     }
 
     fun selectTimer(selectedIndex: Int) {
-        val updatedList = _timerList.value.mapIndexed { index, timer ->
+        val currentList = _timerList.value
+        val updatedList = currentList.mapIndexed { index, timer ->
             timer.copy(isSelected = index == selectedIndex)
         }
-        _timerList.value = updatedList
+
+        _timerList.value = updatedList.toList()
     }
 
     fun getSelectedTimer(): TimerModel? {

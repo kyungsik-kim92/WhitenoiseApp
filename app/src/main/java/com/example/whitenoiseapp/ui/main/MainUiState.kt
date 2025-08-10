@@ -1,4 +1,4 @@
-package com.example.whitenoiseapp
+package com.example.whitenoiseapp.ui.main
 
 sealed class MainUiState {
     data object Loading : MainUiState()
@@ -6,8 +6,6 @@ sealed class MainUiState {
         val isServiceReady: Boolean = false,
         val currentRealTime: Long = 0L
     ) : MainUiState()
-
-    data class Error(val message: String) : MainUiState()
 }
 
 sealed class MainUiEvent {
