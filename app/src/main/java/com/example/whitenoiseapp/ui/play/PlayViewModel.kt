@@ -2,19 +2,21 @@ package com.example.whitenoiseapp.ui.play
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.whitenoiseapp.MainUiEvent
-import com.example.whitenoiseapp.MainViewModel
+import com.example.whitenoiseapp.ui.main.MainUiEvent
+import com.example.whitenoiseapp.ui.main.MainViewModel
 import com.example.whitenoiseapp.constants.Constants
 import com.example.whitenoiseapp.model.PlayModel
 import com.example.whitenoiseapp.model.TimerModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PlayViewModel : ViewModel() {
+@HiltViewModel
+class PlayViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow<PlayUiState>(PlayUiState.Loading)
     val uiState = _uiState.asStateFlow()
