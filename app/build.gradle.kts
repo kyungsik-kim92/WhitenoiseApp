@@ -48,6 +48,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":domain"))
+    implementation(project(":data"))
+    implementation(project(":core"))
 
     implementation(platform("androidx.compose:compose-bom:2025.07.00"))
 
