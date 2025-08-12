@@ -1,4 +1,4 @@
-package com.example.whitenoiseapp.model
+package com.example.whitenoiseapp.domain.model
 
 data class PlayModel(
     val musicResId: Int,
