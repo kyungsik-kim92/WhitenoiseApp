@@ -1,0 +1,259 @@
+package com.example.whitenoiseapp.ui.timer
+
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.whitenoiseapp.R
+import com.example.whitenoiseapp.model.TimerModel
+import com.example.whitenoiseapp.ui.main.MainActivity
+import com.example.whitenoiseapp.ui.main.MainUiEvent
+import com.example.whitenoiseapp.ui.main.MainUiState
+import com.example.whitenoiseapp.ui.main.MainViewModel
+
+
+@Composable
+fun TimerScreen(
+    mainViewModel: MainViewModel = hiltViewModel()
+) {
+    val timerList by mainViewModel.timerList.collectAsState()
+    val mainUiState by mainViewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val mainActivity = context as? MainActivity
+
+    LaunchedEffect(mainUiState) {
+        val state = mainUiState
+        when (state) {
+            is MainUiState.Success -> {
+                if (state.isServiceReady) {
+                    mainActivity?.getServiceInstance()?.let { service ->
+                        mainViewModel.observeTimerState(service.timerState)
+                    }
+                }
+            }
+
+            else -> {}
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        mainViewModel.events.collect { event ->
+            when (event) {
+                is MainUiEvent.ShowError -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+
+                else -> {}
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        colorResource(R.color.green_200),
+                        Color(0xFF2D2D2D)
+                    )
+                )
+            )
+            .padding(24.dp)
+    ) {
+        Text(
+            text = "Sleep Timer",
+            style = MaterialTheme.typography.headlineMedium,
+            color = Color.White,
+            fontWeight = FontWeight.Light,
+            modifier = Modifier.padding(bottom = 20.dp)
+        )
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(timerList.size) { index ->
+                val timer = timerList[index]
+                TimerCard(
+                    timer = timer,
+                    onTimerClick = {
+                        val service = mainActivity?.getServiceInstance()
+
+                        if (service?.isPlaying() != true) {
+                            Toast.makeText(context, "음악을 선택해 주세요", Toast.LENGTH_SHORT).show()
+                            return@TimerCard
+                        }
+
+                        mainViewModel.selectTimer(index)
+                        val selectedTimer = mainViewModel.getSelectedTimer()
+
+                        selectedTimer?.let { timer ->
+                            val timeToSet = if (timer.ms > 0L) timer.ms else 0L
+                            service.setupTimer(timeToSet)
+                            val message = if (timer.ms > 0L) {
+                                "타이머 설정: ${timer.timerStr}"
+                            } else {
+                                "타이머 해제"
+                            }
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun TimerCard(
+    timer: TimerModel,
+    onTimerClick: () -> Unit
+) {
+    val animatedScale by animateFloatAsState(
+        targetValue = if (timer.isSelected) 0.95f else 1f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "scale"
+    )
+
+    val animatedElevation by animateDpAsState(
+        targetValue = if (timer.isSelected) 12.dp else 6.dp,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "elevation"
+    )
+
+    Card(
+        modifier = Modifier
+            .aspectRatio(1.2f)
+            .scale(animatedScale)
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) { onTimerClick() },
+        shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = animatedElevation),
+        colors = CardDefaults.cardColors(
+            containerColor = if (timer.isSelected) {
+                Color(0xFF26A69A)
+            } else {
+                Color(0xFF37474F)
+            }
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = if (timer.ms == 0L) ImageVector.vectorResource(R.drawable.ic_block) else ImageVector.vectorResource(
+                        R.drawable.ic_alarm
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                    tint = if (timer.isSelected) Color.White else Color(0xFFB0B0B0)
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = timer.timerStr,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (timer.isSelected) Color.White else Color(0xFFE0E0E0),
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
+                )
+
+                if (timer.isSelected) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Icon(
+                        imageVector = Icons.Filled.CheckCircle,
+                        contentDescription = "Selected",
+                        modifier = Modifier
+                            .size(80.dp)
+                            .scale(2.0f),
+                        tint = Color(0xFF00E676)
+                    )
+                }
+            }
+            if (timer.isSelected) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            brush = Brush.radialGradient(
+                                colors = listOf(
+                                    Color(0x1A6C5CE7),
+                                    Color.Transparent
+                                ),
+                                radius = 200f
+                            ),
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                )
+            }
+        }
+    }
+}
