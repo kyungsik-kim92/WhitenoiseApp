@@ -2,20 +2,28 @@ package com.example.whitenoiseapp.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.whitenoiseapp.constants.Constants
-import com.example.whitenoiseapp.model.TimerModel
-import com.example.whitenoiseapp.service.WhiteNoiseService
+import com.example.whitenoiseapp.domain.model.TimerState
+import com.example.whitenoiseapp.domain.usecase.FormatTimeUseCase
+import com.example.whitenoiseapp.domain.usecase.GetTimerListUseCase
+import com.example.whitenoiseapp.domain.usecase.ObserveTimerStateUseCase
+import com.example.whitenoiseapp.domain.usecase.SelectTimerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor() : ViewModel() {
+class MainViewModel @Inject constructor(
+    private val getTimerListUseCase: GetTimerListUseCase,
+    private val selectTimerUseCase: SelectTimerUseCase,
+    private val observeTimerStateUseCase: ObserveTimerStateUseCase,
+    private val formatTimeUseCase: FormatTimeUseCase
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<MainUiState>(MainUiState.Loading)
     val uiState = _uiState.asStateFlow()
@@ -23,14 +31,16 @@ class MainViewModel @Inject constructor() : ViewModel() {
     private val _events = MutableSharedFlow<MainUiEvent>()
     val events = _events.asSharedFlow()
 
-    private val _timerList = MutableStateFlow<List<TimerModel>>(emptyList())
-    val timerList = _timerList.asStateFlow()
+    val timerList = getTimerListUseCase().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
 
     private val _realTime = MutableStateFlow(0L)
     val realTime = _realTime.asStateFlow()
 
     init {
-        _timerList.value = Constants.getTimerList()
         _uiState.value = MainUiState.Success()
     }
 
@@ -39,7 +49,6 @@ class MainViewModel @Inject constructor() : ViewModel() {
         if (currentState is MainUiState.Success) {
             _uiState.value = currentState.copy(isServiceReady = ready)
         }
-
         if (ready) {
             viewModelScope.launch {
                 _events.emit(MainUiEvent.ServiceReady)
@@ -47,11 +56,11 @@ class MainViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun observeTimerState(timerState: Flow<WhiteNoiseService.TimerState>) {
+    fun observeTimerState() {
         viewModelScope.launch {
-            timerState.collect { state ->
+            observeTimerStateUseCase().collect { state ->
                 when (state) {
-                    is WhiteNoiseService.TimerState.Update -> {
+                    is TimerState.Update -> {
                         _realTime.value = state.ms
                         val currentState = _uiState.value
                         if (currentState is MainUiState.Success) {
@@ -59,7 +68,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
                         }
                     }
 
-                    is WhiteNoiseService.TimerState.Paused -> {
+                    is TimerState.Paused -> {
                         _realTime.value = state.ms
                         val currentState = _uiState.value
                         if (currentState is MainUiState.Success) {
@@ -70,7 +79,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
                         }
                     }
 
-                    is WhiteNoiseService.TimerState.Resumed -> {
+                    is TimerState.Resumed -> {
                         _realTime.value = state.ms
                         val currentState = _uiState.value
                         if (currentState is MainUiState.Success) {
@@ -81,12 +90,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
                         }
                     }
 
-                    is WhiteNoiseService.TimerState.Finish -> {
-                        val updatedList = _timerList.value.map { timer ->
-                            timer.copy(isSelected = false)
-                        }
-                        _timerList.value = updatedList
-
+                    is TimerState.Finish -> {
                         viewModelScope.launch {
                             _events.emit(MainUiEvent.TimerFinished)
                         }
@@ -98,23 +102,16 @@ class MainViewModel @Inject constructor() : ViewModel() {
     }
 
     fun selectTimer(selectedIndex: Int) {
-        val currentList = _timerList.value
-        val updatedList = currentList.mapIndexed { index, timer ->
-            timer.copy(isSelected = index == selectedIndex)
+        viewModelScope.launch {
+            val result = selectTimerUseCase(selectedIndex)
+            result.onFailure { exception ->
+                _events.emit(MainUiEvent.ShowError(exception.message ?: "Error Message"))
+            }
         }
-
-        _timerList.value = updatedList.toList()
-    }
-
-    fun getSelectedTimer(): TimerModel? {
-        return _timerList.value.find { it.isSelected }
     }
 
     fun formatTime(ms: Long, set: String): String {
-        val hours = ms / 3600000
-        val minutes = ms % 3600000 / 60000
-        val seconds = ms % 3600000 % 60000 / 1000
-        return String.format("$set %02d:%02d:%02d", hours, minutes, seconds)
+        return formatTimeUseCase(ms, set)
     }
 
 }
