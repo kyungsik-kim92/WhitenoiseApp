@@ -1,46 +1,32 @@
 package com.example.whitenoiseapp.ui.timer
 
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -60,7 +46,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.whitenoiseapp.R
-import com.example.whitenoiseapp.model.TimerModel
+import com.example.whitenoiseapp.domain.model.TimerModel
+
 import com.example.whitenoiseapp.ui.main.MainActivity
 import com.example.whitenoiseapp.ui.main.MainUiEvent
 import com.example.whitenoiseapp.ui.main.MainUiState
@@ -74,16 +61,13 @@ fun TimerScreen(
     val timerList by mainViewModel.timerList.collectAsState()
     val mainUiState by mainViewModel.uiState.collectAsState()
     val context = LocalContext.current
-    val mainActivity = context as? MainActivity
 
     LaunchedEffect(mainUiState) {
         val state = mainUiState
         when (state) {
             is MainUiState.Success -> {
                 if (state.isServiceReady) {
-                    mainActivity?.getServiceInstance()?.let { service ->
-                        mainViewModel.observeTimerState(service.timerState)
-                    }
+                    mainViewModel.observeTimerState()
                 }
             }
 
@@ -135,26 +119,7 @@ fun TimerScreen(
                 TimerCard(
                     timer = timer,
                     onTimerClick = {
-                        val service = mainActivity?.getServiceInstance()
-
-                        if (service?.isPlaying() != true) {
-                            Toast.makeText(context, "음악을 선택해 주세요", Toast.LENGTH_SHORT).show()
-                            return@TimerCard
-                        }
-
                         mainViewModel.selectTimer(index)
-                        val selectedTimer = mainViewModel.getSelectedTimer()
-
-                        selectedTimer?.let { timer ->
-                            val timeToSet = if (timer.ms > 0L) timer.ms else 0L
-                            service.setupTimer(timeToSet)
-                            val message = if (timer.ms > 0L) {
-                                "타이머 설정: ${timer.timerStr}"
-                            } else {
-                                "타이머 해제"
-                            }
-                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                        }
                     }
                 )
             }

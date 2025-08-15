@@ -1,8 +1,8 @@
 package com.example.whitenoiseapp.constants
 
 import com.example.whitenoiseapp.R
-import com.example.whitenoiseapp.model.PlayModel
-import com.example.whitenoiseapp.model.TimerModel
+import com.example.whitenoiseapp.domain.model.PlayModel
+import com.example.whitenoiseapp.domain.model.TimerModel
 
 object Constants {
     fun getPlayList(): List<PlayModel> {

@@ -2,11 +2,12 @@ package com.example.whitenoiseapp.ui.play
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.whitenoiseapp.constants.Constants
+import com.example.whitenoiseapp.domain.model.PlayModel
+import com.example.whitenoiseapp.domain.model.TimerModel
+import com.example.whitenoiseapp.domain.usecase.TogglePlaySelectionUseCase
 import com.example.whitenoiseapp.ui.main.MainUiEvent
 import com.example.whitenoiseapp.ui.main.MainViewModel
-import com.example.whitenoiseapp.constants.Constants
-import com.example.whitenoiseapp.model.PlayModel
-import com.example.whitenoiseapp.model.TimerModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PlayViewModel @Inject constructor() : ViewModel() {
+class PlayViewModel @Inject constructor(
+    private val togglePlaySelectionUseCase: TogglePlaySelectionUseCase
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<PlayUiState>(PlayUiState.Loading)
     val uiState = _uiState.asStateFlow()
@@ -65,23 +68,40 @@ class PlayViewModel @Inject constructor() : ViewModel() {
     }
 
     fun togglePlaySelection(index: Int) {
-        val currentList = _playList.value.toMutableList()
-        val currentItem = currentList[index]
-
-        currentList[index] = currentItem.copy(isSelected = !currentItem.isSelected)
-        _playList.value = currentList
-
-        val selectedPlays = currentList.filter { it.isSelected }
         val currentState = _uiState.value
-        if (currentState is PlayUiState.Success) {
-            _uiState.value = currentState.copy(
-                playList = currentList,
-                selectedPlays = selectedPlays
-            )
+        if (currentState is PlayUiState.Success && !currentState.isServiceReady) {
+            viewModelScope.launch {
+                _events.emit(PlayUiEvent.ShowToast("서비스가 준비되지 않았습니다. 잠시 후 다시 시도해주세요."))
+            }
+            return
         }
-
+        
         viewModelScope.launch {
-            _events.emit(PlayUiEvent.PlaySelected(index, currentList[index].isSelected))
+            try {
+                togglePlaySelectionUseCase(index)
+                
+                val currentList = _playList.value.toMutableList()
+                val currentItem = currentList[index]
+                val newSelectionState = !currentItem.isSelected
+                
+                currentList[index] = currentItem.copy(isSelected = newSelectionState)
+                _playList.value = currentList
+
+                val selectedPlays = currentList.filter { it.isSelected }
+                
+                val currentState = _uiState.value
+                if (currentState is PlayUiState.Success) {
+                    _uiState.value = currentState.copy(
+                        playList = currentList,
+                        selectedPlays = selectedPlays
+                    )
+                }
+
+                _events.emit(PlayUiEvent.PlaySelected(index, newSelectionState))
+                
+            } catch (e: Exception) {
+                _events.emit(PlayUiEvent.ShowToast("재생 오류: ${e.message}"))
+            }
         }
     }
 

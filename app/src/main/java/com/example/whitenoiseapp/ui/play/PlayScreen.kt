@@ -1,6 +1,5 @@
 package com.example.whitenoiseapp.ui.play
 
-import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -44,7 +43,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -52,8 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.whitenoiseapp.R
-import com.example.whitenoiseapp.model.PlayModel
-import com.example.whitenoiseapp.ui.main.MainActivity
+import com.example.whitenoiseapp.domain.model.PlayModel
 import com.example.whitenoiseapp.ui.main.MainUiState
 import com.example.whitenoiseapp.ui.main.MainViewModel
 
@@ -69,8 +66,6 @@ fun PlayScreen(
     val timerList by mainViewModel.timerList.collectAsState()
     val realTime by mainViewModel.realTime.collectAsState()
 
-    val context = LocalContext.current
-    val mainActivity = context as? MainActivity
 
     LaunchedEffect(mainUiState) {
         val state = mainUiState
@@ -92,9 +87,7 @@ fun PlayScreen(
         when (val state = mainUiState) {
             is MainUiState.Success -> {
                 if (state.isServiceReady) {
-                    mainActivity?.getServiceInstance()?.let { service ->
-                        mainViewModel.observeTimerState(service.timerState)
-                    }
+                    mainViewModel.observeTimerState()
                 }
             }
 
@@ -106,27 +99,6 @@ fun PlayScreen(
         playViewModel.observeTimerFinished(mainViewModel)
     }
 
-    LaunchedEffect(Unit) {
-        playViewModel.events.collect { event ->
-            when (event) {
-                is PlayUiEvent.PlaySelected -> {
-                    mainActivity?.getServiceInstance()?.let { service ->
-                        if (event.isSelected) {
-                            service.startMediaPlayer(event.index)
-                        } else {
-                            service.stopMediaPlayer(event.index)
-                        }
-                    }
-                }
-
-                is PlayUiEvent.ShowToast -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                }
-
-                else -> {}
-            }
-        }
-    }
 
     when (val state = uiState) {
         is PlayUiState.Loading -> {
@@ -146,7 +118,7 @@ fun PlayScreen(
                         brush = Brush.verticalGradient(
                             colors = listOf(
                                 colorResource(R.color.green_200),
-                                Color(0xFF1A1A1A)  // 더 어두운 그라데이션
+                                Color(0xFF1A1A1A)
                             )
                         )
                     )

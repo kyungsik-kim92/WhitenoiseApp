@@ -1,7 +1,8 @@
 package com.example.whitenoiseapp.ui.play
 
-import com.example.whitenoiseapp.model.PlayModel
-import com.example.whitenoiseapp.model.TimerModel
+import com.example.whitenoiseapp.domain.model.PlayModel
+import com.example.whitenoiseapp.domain.model.TimerModel
+
 
 sealed class PlayUiState {
     data object Loading : PlayUiState()
