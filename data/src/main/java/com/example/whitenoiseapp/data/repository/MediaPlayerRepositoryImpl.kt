@@ -1,5 +1,6 @@
 package com.example.whitenoiseapp.data.repository
 
+import com.example.whitenoiseapp.core.utils.TimeFormatter
 import com.example.whitenoiseapp.data.datasource.service.MediaPlayerDataSource
 import com.example.whitenoiseapp.domain.model.TimerState
 import com.example.whitenoiseapp.domain.repository.MediaPlayerRepository
@@ -35,9 +36,6 @@ class MediaPlayerRepositoryImpl @Inject constructor(
     }
 
     override fun formatTime(ms: Long, prefix: String): String {
-        val hours = ms / 3600000
-        val minutes = ms % 3600000 / 60000
-        val seconds = ms % 3600000 % 60000 / 1000
-        return String.format("$prefix %02d:%02d:%02d", hours, minutes, seconds)
+        return TimeFormatter.formatTimeWithPrefix(ms, prefix)
     }
 }
