@@ -1,7 +1,6 @@
 package com.example.whitenoiseapp.ui.timer
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -158,22 +156,6 @@ fun TimerCard(
                         tint = Color(0xFF00E676)
                     )
                 }
-            }
-            if (timer.isSelected) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            brush = Brush.radialGradient(
-                                colors = listOf(
-                                    Color(0x1A6C5CE7),
-                                    Color.Transparent
-                                ),
-                                radius = 200f
-                            ),
-                            shape = RoundedCornerShape(20.dp)
-                        )
-                )
             }
         }
     }

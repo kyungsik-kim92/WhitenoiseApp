@@ -32,7 +32,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
@@ -270,23 +269,6 @@ fun PlayCard(
                         tint = Color.White
                     )
                 }
-            }
-
-            if (play.isSelected) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            brush = Brush.radialGradient(
-                                colors = listOf(
-                                    Color(0x1A4CAF50),
-                                    Color.Transparent
-                                ),
-                                radius = 100f
-                            ),
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                )
             }
         }
     }
