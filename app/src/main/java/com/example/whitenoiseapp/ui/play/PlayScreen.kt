@@ -40,8 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.example.whitenoiseapp.core.ui.composables.AnimatedCard
-import com.example.whitenoiseapp.core.ui.composables.GradientBackground
+import com.example.whitenoiseapp.core.ui.components.AnimatedCard
+import com.example.whitenoiseapp.core.ui.components.GradientBackground
+import com.example.whitenoiseapp.core.ui.components.SectionTitle
 import com.example.whitenoiseapp.domain.model.PlayModel
 import com.example.whitenoiseapp.ui.main.MainUiState
 import com.example.whitenoiseapp.ui.main.MainViewModel
@@ -109,13 +110,7 @@ fun PlayScreen(
                         .fillMaxSize()
                         .padding(24.dp)
                 ) {
-                    Text(
-                        text = "White Noise",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = Color.White,
-                        fontWeight = FontWeight.Light,
-                        modifier = Modifier.padding(bottom = 20.dp)
-                    )
+                    SectionTitle(text = "White Noise")
 
                     val selectedTimer = timerList.find { it.isSelected }
                     if (selectedTimer != null && selectedTimer.isSelected) {

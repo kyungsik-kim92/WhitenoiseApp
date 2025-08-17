@@ -36,8 +36,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.whitenoiseapp.R
-import com.example.whitenoiseapp.core.ui.composables.AnimatedCard
-import com.example.whitenoiseapp.core.ui.composables.GradientBackground
+import com.example.whitenoiseapp.core.ui.components.AnimatedCard
+import com.example.whitenoiseapp.core.ui.components.GradientBackground
+import com.example.whitenoiseapp.core.ui.components.SectionTitle
 import com.example.whitenoiseapp.domain.model.TimerModel
 import com.example.whitenoiseapp.ui.main.MainUiEvent
 import com.example.whitenoiseapp.ui.main.MainUiState
@@ -83,13 +84,7 @@ fun TimerScreen(
                 .fillMaxSize()
                 .padding(24.dp)
         ) {
-            Text(
-                text = "Sleep Timer",
-                style = MaterialTheme.typography.headlineMedium,
-                color = Color.White,
-                fontWeight = FontWeight.Light,
-                modifier = Modifier.padding(bottom = 20.dp)
-            )
+            SectionTitle(text = "Sleep Timer")
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
