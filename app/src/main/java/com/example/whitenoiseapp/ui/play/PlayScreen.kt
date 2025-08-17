@@ -43,13 +43,12 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.example.whitenoiseapp.R
+import com.example.whitenoiseapp.core.ui.composables.GradientBackground
 import com.example.whitenoiseapp.domain.model.PlayModel
 import com.example.whitenoiseapp.ui.main.MainUiState
 import com.example.whitenoiseapp.ui.main.MainViewModel
@@ -111,52 +110,44 @@ fun PlayScreen(
         }
 
         is PlayUiState.Success -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                colorResource(R.color.green_200),
-                                Color(0xFF1A1A1A)
-                            )
-                        )
-                    )
-                    .padding(24.dp)
-            ) {
-                Text(
-                    text = "White Noise",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = Color.White,
-                    fontWeight = FontWeight.Light,
-                    modifier = Modifier.padding(bottom = 20.dp)
-                )
-
-
-                val selectedTimer = timerList.find { it.isSelected }
-                if (selectedTimer != null && selectedTimer.isSelected) {
-                    TimerInfoCard(
-                        scheduledTime = mainViewModel.formatTime(selectedTimer.ms, "SET"),
-                        realTime = mainViewModel.formatTime(realTime, "TIMER"),
-                        modifier = Modifier.padding(bottom = 24.dp)
-                    )
-                }
-
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(vertical = 8.dp)
+            GradientBackground {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp)
                 ) {
-                    itemsIndexed(playList) { index, play ->
-                        PlayCard(
-                            play = play,
-                            onItemClick = {
-                                playViewModel.togglePlaySelection(index)
-                            }
+                    Text(
+                        text = "White Noise",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = Color.White,
+                        fontWeight = FontWeight.Light,
+                        modifier = Modifier.padding(bottom = 20.dp)
+                    )
+
+                    val selectedTimer = timerList.find { it.isSelected }
+                    if (selectedTimer != null && selectedTimer.isSelected) {
+                        TimerInfoCard(
+                            scheduledTime = mainViewModel.formatTime(selectedTimer.ms, "SET"),
+                            realTime = mainViewModel.formatTime(realTime, "TIMER"),
+                            modifier = Modifier.padding(bottom = 24.dp)
                         )
+                    }
+
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(20.dp),
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(vertical = 8.dp)
+                    ) {
+                        itemsIndexed(playList) { index, play ->
+                            PlayCard(
+                                play = play,
+                                onItemClick = {
+                                    playViewModel.togglePlaySelection(index)
+                                }
+                            )
+                        }
                     }
                 }
             }

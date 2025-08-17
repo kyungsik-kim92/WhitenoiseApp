@@ -39,16 +39,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.whitenoiseapp.R
+import com.example.whitenoiseapp.core.ui.composables.GradientBackground
 import com.example.whitenoiseapp.domain.model.TimerModel
-
-import com.example.whitenoiseapp.ui.main.MainActivity
 import com.example.whitenoiseapp.ui.main.MainUiEvent
 import com.example.whitenoiseapp.ui.main.MainUiState
 import com.example.whitenoiseapp.ui.main.MainViewModel
@@ -87,41 +85,35 @@ fun TimerScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        colorResource(R.color.green_200),
-                        Color(0xFF2D2D2D)
-                    )
-                )
-            )
-            .padding(24.dp)
-    ) {
-        Text(
-            text = "Sleep Timer",
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color.White,
-            fontWeight = FontWeight.Light,
-            modifier = Modifier.padding(bottom = 20.dp)
-        )
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.fillMaxSize()
+    GradientBackground {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp)
         ) {
-            items(timerList.size) { index ->
-                val timer = timerList[index]
-                TimerCard(
-                    timer = timer,
-                    onTimerClick = {
-                        mainViewModel.selectTimer(index)
-                    }
-                )
+            Text(
+                text = "Sleep Timer",
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.White,
+                fontWeight = FontWeight.Light,
+                modifier = Modifier.padding(bottom = 20.dp)
+            )
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(timerList.size) { index ->
+                    val timer = timerList[index]
+                    TimerCard(
+                        timer = timer,
+                        onTimerClick = {
+                            mainViewModel.selectTimer(index)
+                        }
+                    )
+                }
             }
         }
     }
