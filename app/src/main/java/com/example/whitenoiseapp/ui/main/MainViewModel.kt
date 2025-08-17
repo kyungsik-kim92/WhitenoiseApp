@@ -2,6 +2,7 @@ package com.example.whitenoiseapp.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.whitenoiseapp.core.extensions.stateInDefault
 import com.example.whitenoiseapp.domain.model.TimerState
 import com.example.whitenoiseapp.domain.usecase.FormatTimeUseCase
 import com.example.whitenoiseapp.domain.usecase.GetTimerListUseCase
@@ -31,11 +32,7 @@ class MainViewModel @Inject constructor(
     private val _events = MutableSharedFlow<MainUiEvent>()
     val events = _events.asSharedFlow()
 
-    val timerList = getTimerListUseCase().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
+    val timerList = getTimerListUseCase().stateInDefault(viewModelScope, emptyList())
 
     private val _realTime = MutableStateFlow(0L)
     val realTime = _realTime.asStateFlow()
