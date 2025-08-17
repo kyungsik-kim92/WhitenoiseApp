@@ -1,4 +1,4 @@
-package com.example.whitenoiseapp.core.ui.composables
+package com.example.whitenoiseapp.core.ui.components
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState

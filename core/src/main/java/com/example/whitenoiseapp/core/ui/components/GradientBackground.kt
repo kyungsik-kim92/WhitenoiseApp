@@ -1,4 +1,4 @@
-package com.example.whitenoiseapp.core.ui.composables
+package com.example.whitenoiseapp.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
