@@ -1,13 +1,7 @@
 package com.example.whitenoiseapp.ui.play
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,10 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -48,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
+import com.example.whitenoiseapp.core.ui.composables.AnimatedCard
 import com.example.whitenoiseapp.core.ui.composables.GradientBackground
 import com.example.whitenoiseapp.domain.model.PlayModel
 import com.example.whitenoiseapp.ui.main.MainUiState
@@ -230,36 +223,15 @@ fun PlayCard(
     play: PlayModel,
     onItemClick: () -> Unit
 ) {
-    val animatedScale by animateFloatAsState(
-        targetValue = if (play.isSelected) 0.95f else 1f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "scale"
-    )
-
-    val animatedElevation by animateDpAsState(
-        targetValue = if (play.isSelected) 12.dp else 6.dp,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "elevation"
-    )
-
-    Card(
+    AnimatedCard(
         modifier = Modifier
             .aspectRatio(1f)
-            .size(70.dp)
-            .scale(animatedScale)
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) { onItemClick() },
+            .size(70.dp),
+        isSelected = play.isSelected,
+        onClick = onItemClick,
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = animatedElevation),
-        colors = CardDefaults.cardColors(
-            containerColor = if (play.isSelected) {
-                Color(0xFF26A69A)
-            } else {
-                Color(0xFF37474F)
-            }
-        )
+        elevation = 6.dp,
+        selectedElevation = 12.dp
     ) {
         Box(
             modifier = Modifier
