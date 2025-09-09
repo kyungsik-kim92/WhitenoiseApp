@@ -11,7 +11,7 @@ dependencies {
 gradlePlugin {
     plugins {
         register("androidHilt") {
-            id = "whitenoiseapp.hilt.android"
+            id = "whitenoiseapp.android.hilt"
             implementationClass = "com.example.whitenoiseapp.HiltAndroidPlugin"
         }
     }
