@@ -14,7 +14,7 @@ internal fun Project.configureHiltAndroid() {
 
     dependencies {
         "implementation"(libs.findLibrary("hilt.android").get())
-        "kapt"(libs.findLibrary("dagger.hilt.compiler").get())
+        "kapt"(libs.findLibrary("hilt.compiler").get())
     }
 }
 
