@@ -1,3 +1,4 @@
+import com.example.whitenoiseapp.configureComposeAndroid
 import com.example.whitenoiseapp.configureHiltAndroid
 import com.example.whitenoiseapp.configureKotlinAndroid
 
@@ -8,3 +9,4 @@ plugins{
 
 configureKotlinAndroid()
 configureHiltAndroid()
+configureComposeAndroid()
