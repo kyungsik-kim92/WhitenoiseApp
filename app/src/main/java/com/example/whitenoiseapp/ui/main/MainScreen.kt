@@ -28,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.whitenoiseapp.R
+import com.example.whitenoiseapp.core.ui.theme.AppColors
 import com.example.whitenoiseapp.ui.play.PlayScreen
 import com.example.whitenoiseapp.ui.timer.TimerScreen
 
@@ -37,7 +38,7 @@ fun MainScreen() {
     val mainViewModel = hiltViewModel<MainViewModel>()
 
     Scaffold(
-        modifier = Modifier.background(Color(0xFF2A5D61)),
+        modifier = Modifier.background(AppColors.Background),
         bottomBar = {
             MainBottomBar(mainNavigator)
         }
@@ -45,7 +46,7 @@ fun MainScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFF2A5D61))
+                .background(AppColors.Background)
         ) {
             TopGreenHeader()
 
@@ -108,9 +109,9 @@ fun MainBottomBar(navigator: MainNavigator) {
                         contentDescription = item.title,
                         modifier = Modifier.size(20.dp),
                         tint = if (currentRoute == item.route)
-                            Color(0xFF4DB6AC)
+                            AppColors.Selected
                         else
-                            Color(0xFF9E9E9E)
+                            AppColors.Unselected
                     )
 
                 },
