@@ -49,6 +49,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
+        startService(Intent(this, WhiteNoiseService::class.java))
         bindService(
             Intent(this, WhiteNoiseService::class.java),
             serviceConnection,
@@ -61,6 +62,13 @@ class MainActivity : ComponentActivity() {
         try {
             unbindService(serviceConnection)
         } catch (e: Exception) {
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isFinishing) {
+            stopService(Intent(this, WhiteNoiseService::class.java))
         }
     }
 }

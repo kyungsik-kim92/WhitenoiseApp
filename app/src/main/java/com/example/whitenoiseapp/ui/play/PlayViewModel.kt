@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.whitenoiseapp.constants.Constants
 import com.example.whitenoiseapp.domain.model.PlayModel
 import com.example.whitenoiseapp.domain.model.TimerModel
+import com.example.whitenoiseapp.domain.usecase.SyncPlayStateUseCase
 import com.example.whitenoiseapp.domain.usecase.TogglePlaySelectionUseCase
 import com.example.whitenoiseapp.ui.main.MainUiEvent
 import com.example.whitenoiseapp.ui.main.MainViewModel
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlayViewModel @Inject constructor(
-    private val togglePlaySelectionUseCase: TogglePlaySelectionUseCase
+    private val togglePlaySelectionUseCase: TogglePlaySelectionUseCase,
+    private val syncPlayStateUseCase: SyncPlayStateUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<PlayUiState>(PlayUiState.Loading)
@@ -52,6 +54,9 @@ class PlayViewModel @Inject constructor(
         val currentState = _uiState.value
         if (currentState is PlayUiState.Success) {
             _uiState.value = currentState.copy(isServiceReady = isReady)
+            if (isReady) {
+                syncPlayStateService()
+            }
         }
     }
 
@@ -75,20 +80,20 @@ class PlayViewModel @Inject constructor(
             }
             return
         }
-        
+
         viewModelScope.launch {
             try {
                 togglePlaySelectionUseCase(index)
-                
+
                 val currentList = _playList.value.toMutableList()
                 val currentItem = currentList[index]
                 val newSelectionState = !currentItem.isSelected
-                
+
                 currentList[index] = currentItem.copy(isSelected = newSelectionState)
                 _playList.value = currentList
 
                 val selectedPlays = currentList.filter { it.isSelected }
-                
+
                 val currentState = _uiState.value
                 if (currentState is PlayUiState.Success) {
                     _uiState.value = currentState.copy(
@@ -98,7 +103,7 @@ class PlayViewModel @Inject constructor(
                 }
 
                 _events.emit(PlayUiEvent.PlaySelected(index, newSelectionState))
-                
+
             } catch (e: Exception) {
                 _events.emit(PlayUiEvent.ShowToast("재생 오류: ${e.message}"))
             }
@@ -136,4 +141,21 @@ class PlayViewModel @Inject constructor(
         }
     }
 
+    private fun syncPlayStateService() {
+        viewModelScope.launch {
+            try {
+                val syncedList = syncPlayStateUseCase()
+                _playList.value = syncedList
+
+                val currentState = _uiState.value
+                if (currentState is PlayUiState.Success) {
+                    _uiState.value = currentState.copy(
+                        playList = syncedList,
+                        selectedPlays = syncedList.filter { it.isSelected }
+                    )
+                }
+            } catch (e: Exception) {
+            }
+        }
+    }
 }

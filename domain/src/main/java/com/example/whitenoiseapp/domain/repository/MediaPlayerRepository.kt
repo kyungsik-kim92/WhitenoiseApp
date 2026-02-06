@@ -10,5 +10,6 @@ interface MediaPlayerRepository {
     suspend fun setupTimer(timeMs: Long)
     fun getTimerState(): Flow<TimerState>
     fun getRemainingTime(): Long
+    fun getPlayingIndex(): List<Int>
     fun formatTime(ms: Long, prefix: String): String
 }

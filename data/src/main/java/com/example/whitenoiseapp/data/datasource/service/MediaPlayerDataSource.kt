@@ -57,6 +57,10 @@ class MediaPlayerDataSource @Inject constructor() {
     fun getRemainingTime(): Long {
         return whiteNoiseService?.getRemainingTime() ?: 0L
     }
+
+    fun getPlayingIndex(): List<Int> {
+        return whiteNoiseService?.getPlayingIndex() ?: emptyList()
+    }
 }
 
 

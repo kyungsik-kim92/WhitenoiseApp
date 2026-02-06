@@ -35,6 +35,10 @@ class MediaPlayerRepositoryImpl @Inject constructor(
         return mediaPlayerDataSource.getRemainingTime()
     }
 
+    override fun getPlayingIndex(): List<Int> {
+        return mediaPlayerDataSource.getPlayingIndex()
+    }
+
     override fun formatTime(ms: Long, prefix: String): String {
         return TimeFormatter.formatTimeWithPrefix(ms, prefix)
     }

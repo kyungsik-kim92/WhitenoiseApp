@@ -38,6 +38,12 @@ class WhiteNoiseService @Inject constructor(
 
     fun getRemainingTime(): Long = remainingTimeMs
 
+    fun getPlayingIndex(): List<Int> {
+        return mediaPlayerList.mapIndexedNotNull { index, mediaPlayer ->
+            if (mediaPlayer?.isPlaying == true) index else null
+        }
+    }
+
     inner class WhiteNoiseBinder : Binder() {
         fun getService() = this@WhiteNoiseService
     }
@@ -167,5 +173,12 @@ class WhiteNoiseService @Inject constructor(
         if (!isPlaying() && !isTimerPaused && remainingTimeMs > 0) {
             pauseTimer()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timer?.cancel()
+        mediaPlayerList.forEach { it?.release() }
+        mediaPlayerList.clear()
     }
 }
