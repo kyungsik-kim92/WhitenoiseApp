@@ -100,7 +100,7 @@ fun MainBottomBar(navigator: MainNavigator) {
         )
     )
 
-    NavigationBar {
+    NavigationBar(containerColor = Color(0xFFe1cfb1)) {
         bottomBarItems.forEach { item ->
             NavigationBarItem(
                 icon = {
