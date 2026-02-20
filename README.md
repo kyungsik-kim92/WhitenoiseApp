@@ -28,3 +28,15 @@ WhitenoiseApp/
 │   └── utils/              # TimeFormatter
 └── build-logic/            # Convention Plugins (application, library, Hilt)
 ```
+
+## 기술 스택
+- **Language:** Kotlin
+- **UI:** Jetpack Compose
+- **Architecture:** Clean Architecture (3-Layer) + MVVM
+- **Async:** Kotlin Coroutines + Flow (StateFlow)
+- **DI:** Hilt
+- **Jetpack:** ViewModel, Navigation Compose, Lifecycle
+- **Background:** Android Service, MediaPlayer, CountDownTimer
+- **Image:** Coil
+- **Build:** Gradle Kotlin DSL + Convention Plugin + Version Catalog
+- **Testing:** JUnit, Mockito, Turbine, Coroutines Test
