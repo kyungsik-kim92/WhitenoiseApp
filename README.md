@@ -67,3 +67,7 @@ ViewModel이 상수 목록만 참조해 앱 복귀 시 UI와 실제 재생 상�
 - **domain:** UseCase 단위 테스트 (JUnit, Mockito, Coroutines Test)
 - FormatTimeUseCase, GetTimerListUseCase, SelectTimerUseCase, ObserveTimerStateUseCase, GetSelectedTimerUseCase, TogglePlaySelectionUseCase
 
+## 음원 출처
+
+앱 내 사용 음원은 [공유마당](https://gongu.copyright.or.kr)(한국저작권위원회)에서 제공하는 공유저작물을 사용하였습니다.  
+CC BY(저작권정보 표시) 라이선스에 따라 출처를 표기합니다.
