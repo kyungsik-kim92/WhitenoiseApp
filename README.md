@@ -32,14 +32,14 @@ WhitenoiseApp/
 ## 기술 스택
 - **Language:** Kotlin
 - **UI:** Jetpack Compose
-- **Architecture:** Clean Architecture (3-Layer) + MVVM
-- **Async:** Kotlin Coroutines + Flow (StateFlow)
+- **Architecture:** Clean Architecture + MVVM
+- **Async:** Kotlin Coroutines + Flow
 - **DI:** Hilt
 - **Jetpack:** ViewModel, Navigation Compose, Lifecycle
 - **Background:** Android Service, MediaPlayer, CountDownTimer
 - **Image:** Coil
 - **Build:** Gradle Kotlin DSL + Convention Plugin + Version Catalog
-- **Testing:** JUnit, Mockito, Turbine, Coroutines Test
+- **Testing:** JUnit, Mockito, Coroutines Test
 
 
 ## 주요 기능
