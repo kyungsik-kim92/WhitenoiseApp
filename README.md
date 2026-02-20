@@ -40,3 +40,10 @@ WhitenoiseApp/
 - **Image:** Coil
 - **Build:** Gradle Kotlin DSL + Convention Plugin + Version Catalog
 - **Testing:** JUnit, Mockito, Turbine, Coroutines Test
+
+
+## 주요 기능
+- **다중 재생** — 비, 바람, 새소리, 파도, 차량 소리 등 여러 소리를 선택해 동시에 재생
+- **타이머** — 제한 없음 / 1분 ~ 3시간 구간 설정 후 자동 종료, 일시정지·재개 지원
+- **백그라운드 재생** — Android Service 기반으로 앱을 나가도 재생 유지
+- **상태 동기화** — 앱을 백그라운드에서 복귀해도 실제 재생 상태에 맞춰 UI(체크 상태) 자동 반영
